@@ -8,9 +8,16 @@ const router = express.Router()
 // Get user profile
 router.get("/profile", auth, async (req, res) => {
   try {
+    console.log("👉 PROFILE ROUTE HIT")
+    console.log("req.user:", req.user)
+
     const user = await User.findById(req.user._id)
       .populate("questionsAsked", "title createdAt")
       .populate("answersGiven", "content createdAt")
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" })
+    }
 
     res.json({
       user: {
@@ -25,10 +32,11 @@ router.get("/profile", auth, async (req, res) => {
       },
     })
   } catch (error) {
-    console.error("Get profile error:", error)
+    console.error("❌ Get profile error:", error)
     res.status(500).json({ message: "Server error" })
   }
 })
+
 
 // Update user profile
 router.put(
