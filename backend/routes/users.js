@@ -8,8 +8,7 @@ const router = express.Router()
 // Get user profile
 router.get("/profile", auth, async (req, res) => {
   try {
-    console.log("👉 PROFILE ROUTE HIT")
-    console.log("req.user:", req.user)
+    
 
     const user = await User.findById(req.user._id)
       .populate("questionsAsked", "title createdAt")
@@ -32,7 +31,7 @@ router.get("/profile", auth, async (req, res) => {
       },
     })
   } catch (error) {
-    console.error("❌ Get profile error:", error)
+    console.error("Get profile error:", error)
     res.status(500).json({ message: "Server error" })
   }
 })

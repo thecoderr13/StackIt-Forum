@@ -46,9 +46,10 @@ const answerSchema = new mongoose.Schema(
 
 // Virtual for vote score
 answerSchema.virtual("voteScore").get(function () {
-  return this.votes.upvotes.length - this.votes.downvotes.length
+  const upvotes = this.votes?.upvotes?.length || 0
+  const downvotes = this.votes?.downvotes?.length || 0
+  return upvotes - downvotes
 })
-
 // Ensure virtuals are included in JSON
 answerSchema.set("toJSON", { virtuals: true })
 

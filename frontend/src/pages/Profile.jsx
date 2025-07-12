@@ -140,8 +140,11 @@ const Profile = () => {
 
             <div className="border-t pt-6 mt-6">
               <p className="text-sm text-gray-600">
-                Member since {formatDistanceToNow(new Date(profile.createdAt), { addSuffix: true })}
-              </p>
+  {profile.createdAt
+    ? `Member since ${formatDistanceToNow(new Date(profile.createdAt), { addSuffix: true })}`
+    : "Member since (unknown)"}
+</p>
+
             </div>
           </div>
         </div>
@@ -160,9 +163,12 @@ const Profile = () => {
                   {profile.questionsAsked.slice(0, 5).map((question) => (
                     <div key={question._id} className="border-b border-gray-200 pb-4 last:border-b-0">
                       <h3 className="font-medium text-gray-900 mb-1">{question.title}</h3>
-                      <p className="text-sm text-gray-600">
-                        Asked {formatDistanceToNow(new Date(question.createdAt), { addSuffix: true })}
-                      </p>
+                     <p className="text-sm text-gray-600">
+  {question.createdAt
+    ? `Asked ${formatDistanceToNow(new Date(question.createdAt), { addSuffix: true })}`
+    : "Asked (date unknown)"}
+</p>
+
                     </div>
                   ))}
                 </div>
@@ -188,8 +194,11 @@ const Profile = () => {
                         }}
                       />
                       <p className="text-sm text-gray-600">
-                        Answered {formatDistanceToNow(new Date(answer.createdAt), { addSuffix: true })}
-                      </p>
+  {answer.createdAt
+    ? `Answered ${formatDistanceToNow(new Date(answer.createdAt), { addSuffix: true })}`
+    : "Answered (date unknown)"}
+</p>
+
                     </div>
                   ))}
                 </div>
