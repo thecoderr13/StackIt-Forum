@@ -64,13 +64,15 @@ const questionSchema = new mongoose.Schema(
 
 // Virtual for vote score
 questionSchema.virtual("voteScore").get(function () {
-  return this.votes.upvotes.length - this.votes.downvotes.length
-})
+  const upvotes = this.votes?.upvotes || [];
+  const downvotes = this.votes?.downvotes || [];
+  return upvotes.length - downvotes.length;
+});
 
 // Virtual for answer count
 questionSchema.virtual("answerCount").get(function () {
-  return this.answers.length
-})
+  return (this.answers || []).length;
+});
 
 // Ensure virtuals are included in JSON
 questionSchema.set("toJSON", { virtuals: true })

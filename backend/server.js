@@ -31,7 +31,7 @@ app.use(
     origin:
       process.env.NODE_ENV === "production"
         ? ["https://your-frontend-domain.com"]
-        : ["http://localhost:5174", "http://localhost:3000"],
+        : ["http://localhost:5173", "http://localhost:5174", "http://localhost:3000"],
     credentials: true,
   }),
 )
@@ -81,6 +81,8 @@ app.use("*", (req, res) => {
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
+  console.log("MONGODB_URI:", process.env.MONGODB_URI)
+
   console.log(`Server running on port ${PORT}`)
   console.log(`Environment: ${process.env.NODE_ENV}`)
 })

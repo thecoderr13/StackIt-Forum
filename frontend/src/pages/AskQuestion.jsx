@@ -29,40 +29,73 @@ const AskQuestion = () => {
     setTags(tags.filter((tag) => tag !== tagToRemove))
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
+ const handleSubmit = async (e) => {
+  console.log("🔄 handleSubmit triggered")
+  e.preventDefault()
 
-    if (!title.trim()) {
-      toast.error("Please provide a title")
-      return
-    }
-
-    if (!description.trim()) {
-      toast.error("Please provide a description")
-      return
-    }
-
-    if (tags.length === 0) {
-      toast.error("Please add at least one tag")
-      return
-    }
-
-    try {
-      setSubmitting(true)
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/questions`, {
-        title,
-        description,
-        tags,
-      })
-
-      toast.success("Question posted successfully!")
-      navigate(`/questions/${response.data.question._id}`)
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to post question")
-    } finally {
-      setSubmitting(false)
-    }
+  // Basic validations
+  if (!title.trim()) {
+    toast.error("Please provide a title")
+    console.warn("⛔ Title missing")
+    return
   }
+
+  if (!description.trim()) {
+    toast.error("Please provide a description")
+    console.warn("⛔ Description missing")
+    return
+  }
+
+  if (tags.length === 0) {
+    toast.error("Please add at least one tag")
+    console.warn("⛔ No tags provided")
+    return
+  }
+
+  console.log("📦 Submitting payload:", { title, description, tags })
+
+  try {
+    setSubmitting(true)
+
+    // Show Authorization header (important)
+    console.log("🔐 Authorization Header:", axios.defaults.headers.common["Authorization"])
+    if (!axios.defaults.headers.common["Authorization"]) {
+      console.warn("❌ Token missing in Axios headers")
+    }
+
+    // Optional: test manual header override
+    const response = await axios.post(
+      `${import.meta.env.VITE_API_URL}/questions`,
+      { title, description, tags },
+      {
+        headers: {
+          Authorization: axios.defaults.headers.common["Authorization"] || `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    )
+
+    console.log("✅ Question submitted:", response.data)
+
+    toast.success("Question posted successfully!")
+    navigate(`/questions/${response.data.question._id}`)
+  } catch (error) {
+    console.error("❌ POST /questions failed")
+
+    if (error.response) {
+      console.error("🧠 Backend response error:", error.response.data)
+      toast.error(error.response.data?.message || "Server responded with an error")
+    } else if (error.request) {
+      console.error("🌐 No response from backend. Request object:", error.request)
+      toast.error("No response from server. Check network or CORS.")
+    } else {
+      console.error("⚠️ Unknown setup error:", error.message)
+      toast.error("Unexpected error occurred")
+    }
+  } finally {
+    setSubmitting(false)
+  }
+}
+
 
   return (
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -152,7 +185,9 @@ const AskQuestion = () => {
           </button>
           <button
             type="submit"
-            disabled={submitting || !title.trim() || !description.trim() || tags.length === 0}
+            // disabled={submitting || !title.trim() || !description.trim() || tags.length === 0}
+            disabled={false}
+
             className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {submitting ? "Posting..." : "Post Question"}

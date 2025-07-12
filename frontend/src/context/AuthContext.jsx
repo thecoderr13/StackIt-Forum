@@ -62,6 +62,7 @@ export const AuthProvider = ({ children }) => {
       if (token) {
         try {
           const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/me`)
+          
           dispatch({
             type: "LOGIN_SUCCESS",
             payload: {
@@ -82,6 +83,8 @@ export const AuthProvider = ({ children }) => {
   }, [])
 
   const login = async (email, password) => {
+     console.log("LOGIN called with:", email, password);
+  console.log("URL:", `${import.meta.env.VITE_API_URL}/auth/login`);
     try {
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/auth/login`, {
         email,
