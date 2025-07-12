@@ -96,7 +96,7 @@ const Footer = () => {
 
         <div className="border-t border-gray-200 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center">
-            <p className="text-gray-600 text-sm">© 2024 StackIt. All rights reserved.</p>
+            <p className="text-gray-600 text-sm">© 2025 StackIt. All rights reserved.</p>
             <p className="text-gray-600 text-sm mt-2 md:mt-0">Built with ❤️ for the developer community</p>
           </div>
         </div>

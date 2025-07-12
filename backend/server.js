@@ -13,6 +13,8 @@ const notificationRoutes = require("./routes/notifications")
 
 const app = express()
 
+console.log("MONGO_URI:", process.env.MONGODB_URI); // Debug log
+
 // Security middleware
 app.use(helmet())
 
