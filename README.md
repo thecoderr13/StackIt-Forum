@@ -2,7 +2,7 @@
 
 A modern, minimal question-and-answer platform built with the MERN stack, designed for collaborative learning and structured knowledge sharing.
 
-## 🚀 Features
+##  Features
 
 - **User Authentication** - Register, login with JWT
 - **Rich Text Editor** - Full-featured editor with formatting, images, links
@@ -12,7 +12,7 @@ A modern, minimal question-and-answer platform built with the MERN stack, design
 - **Responsive Design** - Mobile-first design with TailwindCSS
 - **Role-based Access** - Guest, User, and Admin roles
 
-## 🛠️ Tech Stack
+##  Tech Stack
 
 - **Frontend**: React 18, Vite, TailwindCSS, React Router
 - **Backend**: Node.js, Express.js, MongoDB, Mongoose
@@ -20,37 +20,7 @@ A modern, minimal question-and-answer platform built with the MERN stack, design
 - **File Upload**: Multer
 - **Rich Text**: React Quill
 
-## 📁 Project Structure
-
-\`\`\`
-stackit-forum/
-├── backend/
-│   ├── config/
-│   ├── controllers/
-│   ├── middleware/
-│   ├── models/
-│   ├── routes/
-│   ├── uploads/
-│   ├── .env
-│   ├── .gitignore
-│   ├── package.json
-│   └── server.js
-├── frontend/
-│   ├── public/
-│   ├── src/
-│   │   ├── components/
-│   │   ├── pages/
-│   │   ├── context/
-│   │   ├── utils/
-│   │   └── App.jsx
-│   ├── .env
-│   ├── .gitignore
-│   ├── package.json
-│   └── vite.config.js
-└── README.md
-\`\`\`
-
-## 🚀 Quick Start
+##  Quick Start
 
 ### Prerequisites
 
@@ -109,7 +79,7 @@ npm run dev
 
 The frontend will run on http://localhost:5173
 
-## 🔧 Environment Variables
+##  Environment Variables
 
 ### Backend (.env)
 - \`PORT\` - Server port (default: 5000)
@@ -120,7 +90,7 @@ The frontend will run on http://localhost:5173
 ### Frontend (.env)
 - \`VITE_API_URL\` - Backend API URL
 
-## 📝 API Endpoints
+##  API Endpoints
 
 ### Authentication
 - \`POST /api/auth/register\` - Register new user
@@ -146,9 +116,8 @@ The frontend will run on http://localhost:5173
 - \`GET /api/notifications\` - Get user notifications
 - \`PUT /api/notifications/:id/read\` - Mark notification as read
 
-## 🎨 UI Components
+##  UI Components
 
-- Landing page with hero section
 - Question listing with search and filters
 - Rich text editor for questions and answers
 - Voting system with upvote/downvote
@@ -156,7 +125,7 @@ The frontend will run on http://localhost:5173
 - Notification dropdown
 - Responsive navigation
 
-## 🔐 Authentication Flow
+##  Authentication Flow
 
 1. Users can browse questions as guests
 2. Registration required for posting questions/answers
@@ -164,14 +133,14 @@ The frontend will run on http://localhost:5173
 4. Protected routes for authenticated users
 5. Role-based permissions (User/Admin)
 
-## 📱 Responsive Design
+##  Responsive Design
 
-- Mobile-first approach
+- Mobile-first approach (using tailwind css)
 - Responsive navigation
 - Optimized for all screen sizes
 - Touch-friendly interface
 
-## 🚀 Deployment
+##  Deployment
 
 ### Backend Deployment
 1. Set production environment variables
@@ -182,7 +151,7 @@ The frontend will run on http://localhost:5173
 2. Build the project: \`npm run build\`
 3. Deploy to Vercel, Netlify, or your preferred platform
 
-## 🤝 Contributing
+##  Contributing
 
 1. Fork the repository
 2. Create a feature branch
@@ -190,6 +159,6 @@ The frontend will run on http://localhost:5173
 4. Push to the branch
 5. Open a Pull Request
 
-## 📄 License
+##  License
 
 This project is licensed under the MIT License.
