@@ -1,16 +1,23 @@
 "use client"
-
+import React from "react"
+import { useNavigate } from "react-router-dom"
 import { useState, useEffect } from "react"
 import { formatDistanceToNow } from "date-fns"
 import { User, Edit, Save, X } from "lucide-react"
+import { Trash } from "lucide-react"
 import axios from "axios"
 import toast from "react-hot-toast"
 import { useAuth } from "../context/AuthContext"
 
 const Profile = () => {
+  const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
   const [loading, setLoading] = useState(true)
   const [editing, setEditing] = useState(false)
+  const [showModal, setShowModal] = useState(false)
+  const [questionToDelete, setQuestionToDelete] = useState(null)
+  const [answerToDelete, setAnswerToDelete] = useState(null)
+
   const [formData, setFormData] = useState({
     username: "",
     bio: "",
@@ -70,8 +77,79 @@ const Profile = () => {
       </div>
     )
   }
+  const handleDeleteClick = (questionId) => {
+  setQuestionToDelete(questionId)
+  setShowModal(true)
+}
+
+const confirmDelete = async () => {
+  try {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/questions/${questionToDelete}`)
+    toast.success("Question deleted")
+    setProfile((prev) => ({
+      ...prev,
+      questionsAsked: prev.questionsAsked.filter((q) => q._id !== questionToDelete),
+    }))
+  } catch (err) {
+    toast.error("Failed to delete question")
+  } finally {
+    setShowModal(false)
+    setQuestionToDelete(null)
+  }
+}
+  const handleAnswerDeleteClick = (answerId) => {
+  setAnswerToDelete(answerId)
+  setShowModal(true)
+}
+
+const confirmAnswerDelete = async () => {
+  try {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/answers/${answerToDelete}`)
+    toast.success("Answer deleted")
+    setProfile((prev) => ({
+      ...prev,
+      answersGiven: prev.answersGiven.filter((a) => a._id !== answerToDelete),
+    }))
+  } catch (err) {
+    toast.error("Failed to delete answer")
+  } finally {
+    setShowModal(false)
+    setAnswerToDelete(null)
+  }
+}
 
   return (
+    <React.Fragment>
+     {showModal && (
+  <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+    <div className="bg-white p-6 rounded-lg shadow-lg max-w-sm w-full">
+      <h2 className="text-lg font-semibold text-gray-800 mb-4">
+        Are you sure you want to delete this {questionToDelete ? "question" : "answer"}?
+      </h2>
+      <p className="text-sm text-gray-600 mb-6">This action cannot be undone.</p>
+      <div className="flex justify-end space-x-2">
+        <button
+          className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-gray-800"
+          onClick={() => {
+            setShowModal(false)
+            setQuestionToDelete(null)
+            setAnswerToDelete(null)
+          }}
+        >
+          Cancel
+        </button>
+        <button
+          className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white"
+          onClick={questionToDelete ? confirmDelete : confirmAnswerDelete}
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
+
     <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Profile Info */}
@@ -159,22 +237,34 @@ const Profile = () => {
               </h2>
 
               {profile.questionsAsked?.length > 0 ? (
-                <div className="space-y-4">
-                  {profile.questionsAsked.slice(0, 5).map((question) => (
-                    <div key={question._id} className="border-b border-gray-200 pb-4 last:border-b-0">
-                      <h3 className="font-medium text-gray-900 mb-1">{question.title}</h3>
-                     <p className="text-sm text-gray-600">
-  {question.createdAt
-    ? `Asked ${formatDistanceToNow(new Date(question.createdAt), { addSuffix: true })}`
-    : "Asked (date unknown)"}
-</p>
+  <div className="space-y-4">
+    {profile.questionsAsked.slice(0, 5).map((question) => (
+      <div key={question._id} className="border-b border-gray-200 pb-4 last:border-b-0 flex justify-between items-start">
+        <div>
+            <h3 className="font-medium text-blue-600 hover:underline mb-1 cursor-pointer" onClick={() => navigate(`/questions/${question._id}`)}>
+            {question.title}
+          </h3>
 
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-600">No questions asked yet.</p>
-              )}
+          <p className="text-sm text-gray-600">
+            {question.createdAt
+              ? `Asked ${formatDistanceToNow(new Date(question.createdAt), { addSuffix: true })}`
+              : "Asked (date unknown)"}
+          </p>
+        </div>
+        <button
+          onClick={() => handleDeleteClick(question._id)}
+          className="text-red-500 hover:text-red-700"
+          title="Delete Question"
+        >
+          <Trash className="w-4 h-4" />
+        </button>
+      </div>
+    ))}
+  </div>
+) : (
+  <p className="text-gray-600">No questions asked yet.</p>
+)}
+
             </div>
 
             {/* Recent Answers */}
@@ -183,33 +273,55 @@ const Profile = () => {
                 Recent Answers ({profile.answersGiven?.length || 0})
               </h2>
 
-              {profile.answersGiven?.length > 0 ? (
-                <div className="space-y-4">
-                  {profile.answersGiven.slice(0, 5).map((answer) => (
-                    <div key={answer._id} className="border-b border-gray-200 pb-4 last:border-b-0">
-                      <div
-                        className="text-sm text-gray-900 mb-1 line-clamp-2"
-                        dangerouslySetInnerHTML={{
-                          __html: answer.content.substring(0, 150) + "...",
-                        }}
-                      />
-                      <p className="text-sm text-gray-600">
-  {answer.createdAt
-    ? `Answered ${formatDistanceToNow(new Date(answer.createdAt), { addSuffix: true })}`
-    : "Answered (date unknown)"}
-</p>
+           {profile.answersGiven?.length > 0 ? (
+  <div className="space-y-4">
+    {profile.answersGiven.slice(0, 5).map((answer) => (
+      <div key={answer._id} className="border-b border-gray-200 pb-4 last:border-b-0 flex justify-between items-start">
+        <div>
+<div
+  className="text-sm text-blue-600 hover:underline cursor-pointer mb-1 line-clamp-2"
+  onClick={() => {
+    console.log("Clicked answer:", answer)
+    if (answer.question && answer.question._id) {
+      navigate(`/questions/${answer.question._id}`)
+    } else {
+      console.warn("Missing question in answer", answer)
+    }
+  }}
+  dangerouslySetInnerHTML={{
+    __html: answer.content.substring(0, 150) + "...",
+  }}
+/>
 
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-gray-600">No answers given yet.</p>
-              )}
+
+
+
+          <p className="text-sm text-gray-600">
+            {answer.createdAt
+              ? `Answered ${formatDistanceToNow(new Date(answer.createdAt), { addSuffix: true })}`
+              : "Answered (date unknown)"}
+          </p>
+        </div>
+        <button
+          onClick={() => handleAnswerDeleteClick(answer._id)}
+          className="text-red-500 hover:text-red-700"
+          title="Delete Answer"
+        >
+          <Trash className="w-4 h-4" />
+        </button>
+      </div>
+    ))}
+  </div>
+) : (
+  <p className="text-gray-600">No answers given yet.</p>
+)}
+
             </div>
           </div>
         </div>
       </div>
     </div>
+    </React.Fragment>
   )
 }
 

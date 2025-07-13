@@ -1,7 +1,34 @@
-import { Link } from "react-router-dom"
+import { useState,useEffect } from "react";
+import { useNavigate,Link } from "react-router-dom"
 import { MessageCircle, Users, Award, TrendingUp, ArrowRight, Search } from "lucide-react"
+import axios from "axios";
 
 const Home = () => {
+    const [searchTerm, setSearchTerm] = useState(""); 
+ const [searchSuggestions, setSearchSuggestions] = useState([]);
+
+const navigate = useNavigate();
+const handleSearch = () => {
+  if (searchTerm.trim()) {
+    navigate(`/questions?search=${encodeURIComponent(searchTerm.trim())}`);
+  }
+};
+
+useEffect(() => {
+  const delayDebounce = setTimeout(() => {
+    if (searchTerm.trim()) {
+      axios
+        .get(`/api/search?q=${encodeURIComponent(searchTerm)}`)
+        .then((res) => setSearchSuggestions(res.data))
+        .catch(() => setSearchSuggestions([]));
+    } else {
+      setSearchSuggestions([]);
+    }
+  }, 300); // debounce
+
+  return () => clearTimeout(delayDebounce);
+}, [searchTerm]);
+
   const features = [
     {
       icon: MessageCircle,
@@ -24,13 +51,31 @@ const Home = () => {
       description: "Upvote helpful content and help the best answers rise to the top.",
     },
   ]
+const [stats, setStats] = useState({
+  questions: 0,
+  answers: 0,
+  users: 0,
+  topics: 0,
+});
 
-  const stats = [
-    { label: "Questions Asked", value: "10,000+" },
-    { label: "Answers Given", value: "25,000+" },
-    { label: "Active Users", value: "5,000+" },
-    { label: "Topics Covered", value: "500+" },
-  ]
+useEffect(() => {
+  const fetchStats = async () => {
+    try {
+      const res = await axios.get("/api/stats");
+      setStats(res.data);
+    } catch (err) {
+      console.error("Failed to load stats:", err);
+    }
+  };
+  fetchStats();
+}, []);
+const statsDisplay = [
+  { label: "Questions Asked", value: stats.questions },
+  { label: "Answers Given", value: stats.answers },
+  { label: "Active Users", value: stats.users },
+  { label: "Topics Covered", value: stats.topics },
+];
+
 
   return (
     <div className="min-h-screen">
@@ -60,23 +105,39 @@ const Home = () => {
 
       {/* Search Section */}
       <section className="py-16 bg-white">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Find answers to your questions</h2>
-            <p className="text-gray-600">Search through thousands of questions and answers from our community</p>
-          </div>
-          <div className="relative max-w-2xl mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
-            <input
-              type="text"
-              placeholder="Search for questions, topics, or keywords..."
-              className="w-full pl-12 pr-4 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm"
-            />
-            <button className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-primary px-6 py-2">
-              Search
-            </button>
-          </div>
-        </div>
+       <div className="relative max-w-2xl mx-auto">
+  <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
+  <input
+    type="text"
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    placeholder="Search for questions, topics, or keywords..."
+    className="w-full pl-12 pr-4 py-4 text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent shadow-sm"
+  />
+  <button
+    type="button"
+    onClick={handleSearch}
+    className="absolute right-2 top-1/2 transform -translate-y-1/2 btn-primary px-6 py-2"
+  >
+    Search
+  </button>
+
+  {/* Suggestions */}
+  {searchSuggestions.length > 0 && (
+    <ul className="absolute left-0 right-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-lg z-10 max-h-60 overflow-auto">
+      {searchSuggestions.map((q) => (
+        <li
+          key={q._id}
+          className="px-4 py-2 hover:bg-gray-100 cursor-pointer text-sm"
+          onClick={() => navigate(`/questions/${q._id}`)}
+        >
+          {q.title}
+        </li>
+      ))}
+    </ul>
+  )}
+</div>
+
       </section>
 
       {/* Features Section */}
@@ -108,7 +169,7 @@ const Home = () => {
       <section className="py-16 bg-primary-600">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
-            {stats.map((stat, index) => (
+            {statsDisplay.map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="text-3xl md:text-4xl font-bold text-white mb-2">{stat.value}</div>
                 <div className="text-primary-100">{stat.label}</div>

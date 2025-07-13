@@ -172,6 +172,7 @@ router.put(
 )
 
 // Delete question
+// Delete question (soft delete + user sync)
 router.delete("/:id", auth, async (req, res) => {
   try {
     const question = await Question.findById(req.params.id)
@@ -180,20 +181,37 @@ router.delete("/:id", auth, async (req, res) => {
       return res.status(404).json({ message: "Question not found" })
     }
 
-    // Check if user is the author or admin
-    if (question.author.toString() !== req.user._id.toString() && req.user.role !== "admin") {
+    const isOwner = question.author.toString() === req.user._id.toString()
+    const isAdmin = req.user.role === "admin"
+
+    if (!isOwner && !isAdmin) {
       return res.status(403).json({ message: "Not authorized to delete this question" })
     }
 
+    // Soft delete the question
     question.isActive = false
     await question.save()
 
-    res.json({ message: "Question deleted successfully" })
+    // Remove from user's questionsAsked
+    await User.findByIdAndUpdate(question.author, {
+      $pull: { questionsAsked: question._id },
+    })
+
+    // Return updated user profile to reflect immediate change on frontend
+    const updatedUser = await User.findById(req.user._id)
+      .populate("questionsAsked")
+      .populate("answersGiven")
+
+    res.json({
+      message: "Question deleted successfully",
+      user: updatedUser,
+    })
   } catch (error) {
     console.error("Delete question error:", error)
     res.status(500).json({ message: "Server error" })
   }
 })
+
 
 // Vote on question
 router.put("/:id/vote", auth, async (req, res) => {

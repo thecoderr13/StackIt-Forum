@@ -10,10 +10,10 @@ const questionRoutes = require("./routes/questions")
 const answerRoutes = require("./routes/answers")
 const userRoutes = require("./routes/users")
 const notificationRoutes = require("./routes/notifications")
+const adminRoutes = require("./routes/admin")
+const searchRoutes = require("./routes/search");
 
 const app = express()
-
-console.log("MONGO_URI:", process.env.MONGODB_URI); // Debug log
 
 // Security middleware
 app.use(helmet())
@@ -53,12 +53,14 @@ mongoose
   .catch((err) => console.error("MongoDB connection error:", err))
 
 // Routes
+app.use("/api/admin", adminRoutes)
 app.use("/api/auth", authRoutes)
 app.use("/api/questions", questionRoutes)
 app.use("/api/answers", answerRoutes)
 app.use("/api/users", userRoutes)
 app.use("/api/notifications", notificationRoutes)
-
+app.use("/api/stats", require("./routes/stats"));
+app.use("/api", searchRoutes);
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "StackIt API is running" })
@@ -81,8 +83,6 @@ app.use("*", (req, res) => {
 const PORT = process.env.PORT || 5000
 
 app.listen(PORT, () => {
-  console.log("MONGODB_URI:", process.env.MONGODB_URI)
-
   console.log(`Server running on port ${PORT}`)
   console.log(`Environment: ${process.env.NODE_ENV}`)
 })

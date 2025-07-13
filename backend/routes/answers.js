@@ -112,21 +112,24 @@ router.put(
 )
 
 // Delete answer
+// DELETE /answers/:id
 router.delete("/:id", auth, async (req, res) => {
   try {
     const answer = await Answer.findById(req.params.id)
 
-    if (!answer) {
-      return res.status(404).json({ message: "Answer not found" })
-    }
+    if (!answer) return res.status(404).json({ message: "Answer not found" })
 
-    // Check if user is the author or admin
     if (answer.author.toString() !== req.user._id.toString() && req.user.role !== "admin") {
       return res.status(403).json({ message: "Not authorized to delete this answer" })
     }
 
-    answer.isActive = false
-    await answer.save()
+    // Soft delete or hard delete depending on your policy:
+    await Answer.findByIdAndDelete(req.params.id)
+
+    // Remove from user's answersGiven
+    await User.findByIdAndUpdate(req.user._id, {
+      $pull: { answersGiven: req.params.id },
+    })
 
     res.json({ message: "Answer deleted successfully" })
   } catch (error) {
@@ -134,6 +137,7 @@ router.delete("/:id", auth, async (req, res) => {
     res.status(500).json({ message: "Server error" })
   }
 })
+
 
 // Vote on answer
 router.put("/:id/vote", auth, async (req, res) => {

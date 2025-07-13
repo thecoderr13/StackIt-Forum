@@ -47,6 +47,7 @@ const Navbar = () => {
               Questions
             </Link>
             {isAuthenticated && (
+              
               <Link
                 to="/ask"
                 className={`text-sm font-medium transition-colors duration-200 ${
@@ -57,7 +58,7 @@ const Navbar = () => {
               </Link>
             )}
           </div>
-
+            
           {/* Search Bar */}
           <div className="hidden md:flex flex-1 max-w-lg mx-8">
             <div className="relative w-full">
@@ -74,6 +75,11 @@ const Navbar = () => {
           <div className="flex items-center space-x-4">
             {isAuthenticated ? (
               <>
+              {user?.role === "admin" && (
+                <Link to="/admin" className="text-sm font-medium text-gray-700 hover:text-primary-600 transition-colors duration-200">Admin Dashboard
+                </Link>
+                )}
+
                 {/* Notifications */}
                 <div className="relative">
                   <button

@@ -16,7 +16,10 @@ import Login from "./pages/Login"
 import Register from "./pages/Register"
 import Profile from "./pages/Profile"
 import NotFound from "./pages/NotFound"
-
+import Admin from "./pages/Admin"
+import AdminUsers from "./pages/Admin/AdminUsers"
+import AdminQuestions from "./pages/Admin/AdminQuestions"
+import AdminAnswers from "./pages/Admin/AdminAnswers"
 // Protected Route Component
 import ProtectedRoute from "./components/ProtectedRoute"
 
@@ -33,6 +36,10 @@ function App() {
                 <Route path="/questions" element={<Questions />} />
                 <Route path="/questions/:id" element={<QuestionDetail />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/admin/users" element={<AdminUsers />} />
+                <Route path="/admin/questions" element={<AdminQuestions />} />
+                <Route path="/admin/answers" element={<AdminAnswers />} />
                 <Route path="/register" element={<Register />} />
                 <Route
                   path="/ask"
