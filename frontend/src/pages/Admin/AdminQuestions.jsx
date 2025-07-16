@@ -67,7 +67,8 @@ const AdminQuestions = () => {
     </div>
   )}
   <div>
-    <p className="font-semibold">{q.title}</p>
+    <p className="font-semibold whitespace-pre-wrap break-words">{q.title}</p>
+
     <p className="text-sm text-gray-600">By: {q.author?.username}</p>
   </div>
 </div>

@@ -87,7 +87,8 @@ const AdminAnswers = () => {
     </div>
   )}
   <div>
-    <p className="font-medium line-clamp-2">{stripHtml(a.content)}</p>
+   <p className="font-medium whitespace-pre-wrap">{stripHtml(a.content)}</p>
+
     <p className="text-sm text-gray-600">By: {a.author?.username}</p>
   </div>
 </div>
