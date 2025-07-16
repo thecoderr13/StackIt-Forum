@@ -47,6 +47,7 @@ router.post(
       // Add to user's answers
       await User.findByIdAndUpdate(req.user._id, {
         $push: { answersGiven: answer._id },
+        $inc: { reputation: 10 },
       })
 
       // Create notification for question author
@@ -159,9 +160,13 @@ router.put("/:id/vote", auth, async (req, res) => {
 
     // Add new vote if different from existing
     if (voteType === "up" && !hasUpvoted) {
-      answer.votes.upvotes.push(userId)
+      answer.votes.upvotes.push(userId);
+      // Increment reputation of answer author (+5 for upvote)
+      await User.findByIdAndUpdate(answer.author, { $inc: { reputation: 5 } });
     } else if (voteType === "down" && !hasDownvoted) {
-      answer.votes.downvotes.push(userId)
+      answer.votes.downvotes.push(userId);
+      // Add reputation penalty (-2 for downvote)
+      await User.findByIdAndUpdate(answer.author, { $inc: { reputation: -2 } });
     }
 
     await answer.save()
@@ -217,7 +222,9 @@ router.put("/:id/accept", auth, async (req, res) => {
         relatedQuestion: question._id,
         relatedAnswer: answer._id,
       })
-      await notification.save()
+      await notification.save();
+
+      await User.findByIdAndUpdate(answer.author, { $inc: { reputation: 20 } });
     }
 
     res.json({

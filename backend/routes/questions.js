@@ -110,6 +110,7 @@ router.post(
 
       // Add to user's questions
       await User.findByIdAndUpdate(req.user._id, {
+        $inc: { reputation: 5 },
         $push: { questionsAsked: question._id },
       })
 
