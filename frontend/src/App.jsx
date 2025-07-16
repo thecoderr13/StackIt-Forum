@@ -22,7 +22,7 @@ import AdminQuestions from "./pages/Admin/AdminQuestions"
 import AdminAnswers from "./pages/Admin/AdminAnswers"
 // Protected Route Component
 import ProtectedRoute from "./components/ProtectedRoute"
-
+import AllNotifications from "./pages/AllNotifications"
 function App() {
   return (
     <AuthProvider>
@@ -41,6 +41,7 @@ function App() {
                 <Route path="/admin/questions" element={<AdminQuestions />} />
                 <Route path="/admin/answers" element={<AdminAnswers />} />
                 <Route path="/register" element={<Register />} />
+                <Route path="/notifications" element={<AllNotifications />} />
                 <Route
                   path="/ask"
                   element={

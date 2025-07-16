@@ -118,11 +118,24 @@ const AnswerCard = ({ answer, questionAuthorId, onUpdate, onAccept }) => {
             <div className="flex items-center space-x-4">
               {/* Author Info */}
               <div className="flex items-center space-x-2 text-sm text-gray-600">
-                <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                  <span className="text-primary-600 text-xs font-medium">
-                    {author?.username?.[0]?.toUpperCase() || "U"}
-                  </span>
-                </div>
+                {author?.avatar ? (
+  <img
+    src={author.avatar}
+    alt={`${author.username}'s avatar`}
+    className="w-8 h-8 rounded-full object-cover"
+    onError={(e) => {
+      e.target.onerror = null
+      e.target.style.display = "none"
+    }}
+  />
+) : (
+  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+    <span className="text-primary-600 text-xs font-medium">
+      {author?.username?.[0]?.toUpperCase() || "U"}
+    </span>
+  </div>
+)}
+
                 <div>
                   <p className="font-medium text-gray-900">{author?.username}</p>
                   <p className="text-xs">answered {formatDistanceToNow(new Date(createdAt), { addSuffix: true })}</p>

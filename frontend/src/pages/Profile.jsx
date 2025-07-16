@@ -8,7 +8,7 @@ import { Trash } from "lucide-react"
 import axios from "axios"
 import toast from "react-hot-toast"
 import { useAuth } from "../context/AuthContext"
-
+import PfpUpload from "../components/AvatarUpload";
 const Profile = () => {
   const navigate = useNavigate()
   const [profile, setProfile] = useState(null)
@@ -34,6 +34,8 @@ const Profile = () => {
         username: response.data.user.username,
         bio: response.data.user.bio || "",
       })
+      
+
     } catch (error) {
       toast.error("Failed to fetch profile")
       console.error("Error fetching profile:", error)
@@ -46,21 +48,28 @@ const Profile = () => {
     fetchProfile()
   }, [])
 
-  const handleSave = async () => {
-    try {
-      setSaving(true)
-      const response = await axios.put(`${import.meta.env.VITE_API_URL}/users/profile`, formData)
-
-      setProfile(response.data.user)
-      updateUser(response.data.user)
-      setEditing(false)
-      toast.success("Profile updated successfully")
-    } catch (error) {
-      toast.error(error.response?.data?.message || "Failed to update profile")
-    } finally {
-      setSaving(false)
-    }
+ const handleSave = async () => {
+  try {
+    setSaving(true)
+    const response = await axios.put(`${import.meta.env.VITE_API_URL}/users/profile`, formData)
+    
+    toast.success("Profile updated successfully")
+    
+    await fetchProfile() // 🧠 Fetch full fresh profile with all data
+    setEditing(false)
+  } catch (error) {
+  const message = error.response?.data?.message || "Failed to update profile"
+  if (message.toLowerCase().includes("username")) {
+    toast.error("That username is already taken.")
+  } else {
+    toast.error(message)
   }
+}
+ finally {
+    setSaving(false)
+  }
+}
+
 
   const handleCancel = () => {
     setFormData({
@@ -156,9 +165,29 @@ const confirmAnswerDelete = async () => {
         <div className="lg:col-span-1">
           <div className="card p-6">
             <div className="text-center mb-6">
-              <div className="w-24 h-24 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <User className="w-12 h-12 text-primary-600" />
-              </div>
+         <div className="flex justify-center mb-6">
+  {editing ? (
+    <PfpUpload
+      currentAvatar={profile?.avatar || "/default-avatar.png"}
+      onUploadSuccess={(newAvatar) => {
+        setProfile((prev) => ({ ...prev, avatar: newAvatar }))
+        updateUser({ avatar: newAvatar })
+        toast.success("Profile picture updated")
+      }}
+      showModalConfirm 
+    />
+  ) : (
+    <img
+      src={profile?.avatar || "/default-avatar.png"}
+      alt="User Avatar"
+      className="w-24 h-24 rounded-full object-cover shadow-md"
+    />
+  )}
+</div>
+
+
+
+
 
               {editing ? (
                 <div className="space-y-4">
@@ -182,10 +211,15 @@ const confirmAnswerDelete = async () => {
                     />
                   </div>
                   <div className="flex space-x-2">
-                    <button onClick={handleSave} disabled={saving} className="btn-primary flex-1 disabled:opacity-50">
-                      <Save className="w-4 h-4 mr-2" />
-                      {saving ? "Saving..." : "Save"}
-                    </button>
+                    <button
+  onClick={handleSave}
+  disabled={saving}
+  className="btn-primary flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
+>
+  <Save className="w-4 h-4" />
+  {saving ? "Saving..." : "Save"}
+</button>
+
                     <button onClick={handleCancel} className="btn-secondary">
                       <X className="w-4 h-4" />
                     </button>

@@ -87,16 +87,17 @@ const Questions = () => {
       <div className="card p-6 mb-8">
         <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 mb-4">
           <div className="flex-1">
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
-              <input
-                type="text"
-                placeholder="Search questions..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="form-input pl-10"
-              />
-            </div>
+           <div className="relative w-full">
+  <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5 pointer-events-none" />
+  <input
+    type="text"
+    placeholder="Search questions..."
+    value={searchTerm}
+    onChange={(e) => setSearchTerm(e.target.value)}
+    className="w-full pl-12 pr-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+  />
+</div>
+
           </div>
           <button type="submit" className="btn-primary px-6">
             Search

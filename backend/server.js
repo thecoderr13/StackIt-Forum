@@ -12,6 +12,7 @@ const userRoutes = require("./routes/users")
 const notificationRoutes = require("./routes/notifications")
 const adminRoutes = require("./routes/admin")
 const searchRoutes = require("./routes/search");
+const uploadRoutes = require("./routes/upload.js")
 
 const app = express()
 
@@ -61,6 +62,9 @@ app.use("/api/users", userRoutes)
 app.use("/api/notifications", notificationRoutes)
 app.use("/api/stats", require("./routes/stats"));
 app.use("/api", searchRoutes);
+app.use("/api", uploadRoutes)
+
+
 // Health check endpoint
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "StackIt API is running" })

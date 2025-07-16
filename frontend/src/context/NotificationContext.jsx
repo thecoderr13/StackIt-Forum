@@ -26,16 +26,16 @@ const notificationReducer = (state, action) => {
     case "MARK_AS_READ":
       return {
         ...state,
-        notifications: state.notifications.map((notification) =>
-          notification._id === action.payload ? { ...notification, isRead: true } : notification,
+        notifications: state.notifications.map((n) =>
+          n._id === action.payload ? { ...n, isRead: true } : n
         ),
         unreadCount: Math.max(0, state.unreadCount - 1),
       }
     case "MARK_ALL_READ":
       return {
         ...state,
-        notifications: state.notifications.map((notification) => ({
-          ...notification,
+        notifications: state.notifications.map((n) => ({
+          ...n,
           isRead: true,
         })),
         unreadCount: 0,
@@ -60,32 +60,52 @@ export const NotificationProvider = ({ children }) => {
 
     try {
       dispatch({ type: "SET_LOADING", payload: true })
-      const response = await axios.get(`${import.meta.env.VITE_API_URL}/notifications`)
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/notifications`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       dispatch({
         type: "SET_NOTIFICATIONS",
-        payload: response.data,
+        payload: res.data,
       })
-    } catch (error) {
-      console.error("Error fetching notifications:", error)
+    } catch (err) {
+      console.error("Error fetching notifications:", err)
       dispatch({ type: "SET_LOADING", payload: false })
     }
   }
 
   const markAsRead = async (notificationId) => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/notifications/${notificationId}/read`)
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/notifications/${notificationId}/read`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       dispatch({ type: "MARK_AS_READ", payload: notificationId })
-    } catch (error) {
-      console.error("Error marking notification as read:", error)
+    } catch (err) {
+      console.error("Error marking notification as read:", err)
     }
   }
 
   const markAllAsRead = async () => {
     try {
-      await axios.put(`${import.meta.env.VITE_API_URL}/notifications/read-all`)
+      await axios.put(
+        `${import.meta.env.VITE_API_URL}/notifications/read-all`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
       dispatch({ type: "MARK_ALL_READ" })
-    } catch (error) {
-      console.error("Error marking all notifications as read:", error)
+    } catch (err) {
+      console.error("Error marking all notifications as read:", err)
     }
   }
 

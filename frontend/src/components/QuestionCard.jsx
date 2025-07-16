@@ -68,11 +68,24 @@ const QuestionCard = ({ question }) => {
           {/* Author and Date */}
           <div className="flex items-center justify-between text-sm text-gray-500">
             <div className="flex items-center space-x-2">
-              <div className="w-6 h-6 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 text-xs font-medium">
-                  {author?.username?.[0]?.toUpperCase() || "U"}
-                </span>
-              </div>
+              {author?.avatar ? (
+  <img
+    src={author.avatar}
+    alt={`${author.username}'s avatar`}
+    className="w-8 h-8 rounded-full object-cover"
+    onError={(e) => {
+      e.target.onerror = null
+      e.target.style.display = "none"
+    }}
+  />
+) : (
+  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+    <span className="text-primary-600 text-xs font-medium">
+      {author?.username?.[0]?.toUpperCase() || "U"}
+    </span>
+  </div>
+)}
+
               <span className="font-medium text-gray-700">{author?.username}</span>
               <span>•</span>
               <span>{formatDistanceToNow(new Date(createdAt), { addSuffix: true })}</span>

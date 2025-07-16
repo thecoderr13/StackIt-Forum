@@ -1,13 +1,14 @@
 "use client"
 
 import { useEffect, useRef } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 import { formatDistanceToNow } from "date-fns"
 import { useNotifications } from "../context/NotificationContext"
 
 const NotificationDropdown = ({ onClose }) => {
   const { notifications, unreadCount, markAsRead, markAllAsRead } = useNotifications()
   const dropdownRef = useRef(null)
+  const navigate = useNavigate()
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -24,6 +25,13 @@ const NotificationDropdown = ({ onClose }) => {
     if (!notification.isRead) {
       markAsRead(notification._id)
     }
+
+    if (notification.link) {
+      navigate(notification.link)
+    } else {
+      console.warn("Notification has no link!")
+    }
+
     onClose()
   }
 
@@ -36,7 +44,10 @@ const NotificationDropdown = ({ onClose }) => {
       <div className="px-4 py-3 border-b border-gray-200 flex justify-between items-center">
         <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
         {unreadCount > 0 && (
-          <button onClick={markAllAsRead} className="text-xs text-primary-600 hover:text-primary-700 font-medium">
+          <button
+            onClick={markAllAsRead}
+            className="text-xs text-primary-600 hover:text-primary-700 font-medium"
+          >
             Mark all read
           </button>
         )}
@@ -49,36 +60,55 @@ const NotificationDropdown = ({ onClose }) => {
             <p className="text-sm">No notifications yet</p>
           </div>
         ) : (
-          notifications.slice(0, 10).map((notification) => (
-            <div
-              key={notification._id}
-              className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors duration-200 ${
-                !notification.isRead ? "bg-blue-50" : ""
-              }`}
-              onClick={() => handleNotificationClick(notification)}
-            >
-              <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
-                    <span className="text-primary-600 text-xs font-medium">
-                      {notification.sender?.username?.[0]?.toUpperCase() || "U"}
-                    </span>
-                  </div>
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm text-gray-900 line-clamp-2">{notification.message}</p>
-                  <p className="text-xs text-gray-500 mt-1">
-                    {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                  </p>
-                </div>
-                {!notification.isRead && (
+          notifications.slice(0, 10).map((notification) => {
+            const sender = notification.sender
+            const senderName = sender?.username ?? "User"
+            const senderInitial = senderName[0]?.toUpperCase() ?? "U"
+            const senderAvatar = sender?.avatar
+
+            return (
+              <div
+                key={notification._id}
+                className={`px-4 py-3 border-b border-gray-100 hover:bg-gray-50 cursor-pointer transition-colors duration-200 ${
+                  !notification.isRead ? "bg-blue-50" : ""
+                }`}
+                onClick={() => handleNotificationClick(notification)}
+              >
+                <div className="flex items-start space-x-3">
                   <div className="flex-shrink-0">
-                    <div className="w-2 h-2 bg-primary-600 rounded-full"></div>
+                    {senderAvatar ? (
+                      <img
+                        src={senderAvatar}
+                        alt={`${senderName}'s avatar`}
+                        className="w-8 h-8 rounded-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null
+                          e.target.style.display = "none"
+                        }}
+                      />
+                    ) : (
+                      <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
+                        <span className="text-primary-600 text-xs font-medium">
+                          {senderInitial}
+                        </span>
+                      </div>
+                    )}
                   </div>
-                )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm text-gray-900 line-clamp-2">{notification.message}</p>
+                    <p className="text-xs text-gray-500 mt-1">
+                      {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
+                    </p>
+                  </div>
+                  {!notification.isRead && (
+                    <div className="flex-shrink-0 mt-1">
+                      <div className="w-2 h-2 bg-primary-600 rounded-full" />
+                    </div>
+                  )}
+                </div>
               </div>
-            </div>
-          ))
+            )
+          })
         )}
       </div>
 

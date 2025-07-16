@@ -47,7 +47,7 @@ router.put("/user/:id/promote", adminAuth, async (req, res) => {
 // GET all questions
 router.get("/questions", adminAuth, async (req, res) => {
   try {
-    const questions = await Question.find().populate("author", "username")
+    const questions = await Question.find().populate("author", "username avatar")
     res.json(questions)
   } catch (err) {
     console.error("Fetch all questions error:", err)
@@ -68,7 +68,7 @@ router.delete("/question/:id", adminAuth, async (req, res) => {
 router.get("/answers",  adminAuth, async (req, res) => {
   try {
     const answers = await Answer.find()
-      .populate("author", "username")
+      .populate("author", "username avatar")
       .populate("question", "title")
     res.json(answers)
   } catch (err) {

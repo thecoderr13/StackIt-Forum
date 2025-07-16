@@ -68,10 +68,30 @@ const AdminAnswers = () => {
             key={a._id}
             className="p-4 bg-white rounded-xl shadow-md flex justify-between items-center"
           >
-            <div>
-              <p className="font-medium line-clamp-2">{stripHtml(a.content)}</p>
-              <p className="text-sm text-gray-600">By: {a.author?.username}</p>
-            </div>
+            <div className="flex items-center gap-4">
+  {a.author?.avatar ? (
+    <img
+      src={a.author.avatar}
+      alt={`${a.author.username}'s avatar`}
+      className="w-10 h-10 rounded-full object-cover"
+      onError={(e) => {
+        e.target.onerror = null
+        e.target.style.display = "none"
+      }}
+    />
+  ) : (
+    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+      <span className="text-primary-600 text-sm font-semibold">
+        {a.author?.username?.[0]?.toUpperCase() || "U"}
+      </span>
+    </div>
+  )}
+  <div>
+    <p className="font-medium line-clamp-2">{stripHtml(a.content)}</p>
+    <p className="text-sm text-gray-600">By: {a.author?.username}</p>
+  </div>
+</div>
+
             <button
               onClick={() => deleteAnswer(a._id)}
               className="px-3 py-1 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition"

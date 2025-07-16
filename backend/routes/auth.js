@@ -40,21 +40,17 @@ router.post(
 
       // Create new user
       const user = new User({ username, email, password })
-      await user.save()
-
-      // Generate JWT token
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
-
-      res.status(201).json({
-        message: "User registered successfully",
-        token,
-        user: {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-        },
-      })
+      await user.sres.status(201).json({
+  message: "User registered successfully",
+  token,
+  user: {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+    avatar: user.avatar, // ✅ Add this
+  },
+})
     } catch (error) {
       console.error("Registration error:", error)
       res.status(500).json({ message: "Server error during registration" })
@@ -94,15 +90,17 @@ router.post(
       const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" })
 
       res.json({
-        message: "Login successful",
-        token,
-        user: {
-          id: user._id,
-          username: user.username,
-          email: user.email,
-          role: user.role,
-        },
-      })
+  message: "Login successful",
+  token,
+  user: {
+    id: user._id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+    avatar: user.avatar, // ✅ Add this
+  },
+})
+
     } catch (error) {
       console.error("Login error:", error)
       res.status(500).json({ message: "Server error during login" })
@@ -113,15 +111,12 @@ router.post(
 // Get current user
 router.get("/me", auth, async (req, res) => {
   try {
-    res.json({
-      user: {
-        id: req.user._id,
-        username: req.user.username,
-        email: req.user.email,
-        role: req.user.role,
-        reputation: req.user.reputation,
-      },
-    })
+    const user = await User.findById(req.user._id).select("-password")
+    if (!user) return res.status(404).json({ message: "User not found" })
+
+    res.json({ user })
+    //console.log("🚀 Auth user after login:", user)
+
   } catch (error) {
     console.error("Get user error:", error)
     res.status(500).json({ message: "Server error" })

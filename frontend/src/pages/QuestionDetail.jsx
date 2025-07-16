@@ -205,16 +205,29 @@ const QuestionDetail = () => {
 
             {/* Author Info */}
             <div className="flex items-center space-x-3 text-sm">
-              <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
-                <span className="text-primary-600 font-medium">
-                  {question.author?.username?.[0]?.toUpperCase() || "U"}
-                </span>
-              </div>
-              <div>
-                <p className="font-medium text-gray-900">{question.author?.username}</p>
-                <p className="text-gray-500">{question.author?.reputation || 0} reputation</p>
-              </div>
-            </div>
+  {question.author?.avatar ? (
+    <img
+      src={question.author.avatar}
+      alt={`${question.author.username}'s avatar`}
+      className="w-10 h-10 rounded-full object-cover"
+      onError={(e) => {
+        e.target.onerror = null
+        e.target.style.display = "none"
+      }}
+    />
+  ) : (
+    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+      <span className="text-primary-600 font-medium">
+        {question.author?.username?.[0]?.toUpperCase() || "U"}
+      </span>
+    </div>
+  )}
+  <div>
+    <p className="font-medium text-gray-900">{question.author?.username}</p>
+    <p className="text-gray-500">{question.author?.reputation || 0} reputation</p>
+  </div>
+</div>
+
           </div>
         </div>
       </div>

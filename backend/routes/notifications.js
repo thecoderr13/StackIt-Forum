@@ -5,33 +5,41 @@ const { auth } = require("../middleware/auth")
 const router = express.Router()
 
 // Get user notifications
+// Get user notifications
 router.get("/", auth, async (req, res) => {
   try {
-    const page = Number.parseInt(req.query.page) || 1
-    const limit = Number.parseInt(req.query.limit) || 20
-    const skip = (page - 1) * limit
+    const page = Number.parseInt(req.query.page) || 1;
+    const limit = Number.parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
 
     const notifications = await Notification.find({ recipient: req.user._id })
       .populate("sender", "username avatar")
-      .populate("relatedQuestion", "title")
+      .populate("relatedQuestion", "title") // Needed for link
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
+      .lean(); // So we can add `link`
+
+    const enhancedNotifications = notifications.map((notif) => ({
+      ...notif,
+      link: notif.relatedQuestion ? `/questions/${notif.relatedQuestion._id}` : null,
+    }));
 
     const unreadCount = await Notification.countDocuments({
       recipient: req.user._id,
       isRead: false,
-    })
+    });
 
     res.json({
-      notifications,
+      notifications: enhancedNotifications,
       unreadCount,
-    })
+    });
   } catch (error) {
-    console.error("Get notifications error:", error)
-    res.status(500).json({ message: "Server error" })
+    console.error("Get notifications error:", error);
+    res.status(500).json({ message: "Server error" });
   }
-})
+});
+
 
 // Mark notification as read
 router.put("/:id/read", auth, async (req, res) => {

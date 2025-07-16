@@ -30,38 +30,36 @@ const AskQuestion = () => {
   }
 
  const handleSubmit = async (e) => {
-  console.log("🔄 handleSubmit triggered")
+  
   e.preventDefault()
 
   // Basic validations
   if (!title.trim()) {
     toast.error("Please provide a title")
-    console.warn("⛔ Title missing")
+    
     return
   }
 
   if (!description.trim()) {
     toast.error("Please provide a description")
-    console.warn("⛔ Description missing")
+    
     return
   }
 
   if (tags.length === 0) {
     toast.error("Please add at least one tag")
-    console.warn("⛔ No tags provided")
+    
     return
   }
 
-  console.log("📦 Submitting payload:", { title, description, tags })
+  
 
   try {
     setSubmitting(true)
 
     // Show Authorization header (important)
-    console.log("🔐 Authorization Header:", axios.defaults.headers.common["Authorization"])
-    if (!axios.defaults.headers.common["Authorization"]) {
-      console.warn("❌ Token missing in Axios headers")
-    }
+   
+   
 
     // Optional: test manual header override
     const response = await axios.post(
@@ -74,21 +72,19 @@ const AskQuestion = () => {
       }
     )
 
-    console.log("✅ Question submitted:", response.data)
+    
 
     toast.success("Question posted successfully!")
     navigate(`/questions/${response.data.question._id}`)
   } catch (error) {
-    console.error("❌ POST /questions failed")
-
     if (error.response) {
-      console.error("🧠 Backend response error:", error.response.data)
+      
       toast.error(error.response.data?.message || "Server responded with an error")
     } else if (error.request) {
-      console.error("🌐 No response from backend. Request object:", error.request)
+      
       toast.error("No response from server. Check network or CORS.")
     } else {
-      console.error("⚠️ Unknown setup error:", error.message)
+      
       toast.error("Unexpected error occurred")
     }
   } finally {
@@ -185,8 +181,8 @@ const AskQuestion = () => {
           </button>
           <button
             type="submit"
-            // disabled={submitting || !title.trim() || !description.trim() || tags.length === 0}
-            disabled={false}
+            disabled={submitting || !title.trim() || !description.trim() || tags.length === 0}
+            // disabled={false}
 
             className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
           >

@@ -48,10 +48,30 @@ const AdminQuestions = () => {
       <ul className="space-y-4">
         {filteredQuestions.map((q) => (
           <li key={q._id} className="p-4 bg-white rounded-xl shadow-md flex justify-between items-center">
-            <div>
-              <p className="font-semibold">{q.title}</p>
-              <p className="text-sm text-gray-600">By: {q.author?.username}</p>
-            </div>
+          <div className="flex items-center gap-4">
+  {q.author?.avatar ? (
+    <img
+      src={q.author.avatar}
+      alt={`${q.author.username}'s avatar`}
+      className="w-10 h-10 rounded-full object-cover"
+      onError={(e) => {
+        e.target.onerror = null
+        e.target.style.display = "none"
+      }}
+    />
+  ) : (
+    <div className="w-10 h-10 bg-primary-100 rounded-full flex items-center justify-center">
+      <span className="text-primary-600 text-sm font-semibold">
+        {q.author?.username?.[0]?.toUpperCase() || "U"}
+      </span>
+    </div>
+  )}
+  <div>
+    <p className="font-semibold">{q.title}</p>
+    <p className="text-sm text-gray-600">By: {q.author?.username}</p>
+  </div>
+</div>
+
             <button
               className="px-3 py-1 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-lg transition"
               onClick={() => deleteQuestion(q._id)}
