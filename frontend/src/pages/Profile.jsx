@@ -211,14 +211,10 @@ const confirmAnswerDelete = async () => {
                     />
                   </div>
                   <div className="flex space-x-2">
-                    <button
-  onClick={handleSave}
-  disabled={saving}
-  className="btn-primary flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200"
->
+                    <button onClick={handleSave} disabled={saving} className="btn-primary flex items-center justify-center gap-2 px-4 py-2 rounded-md font-medium text-white bg-blue-600 hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition duration-200">
   <Save className="w-4 h-4" />
-  {saving ? "Saving..." : "Save"}
-</button>
+          {saving ? "Saving..." : "Save"}
+                      </button>
 
                     <button onClick={handleCancel} className="btn-secondary">
                       <X className="w-4 h-4" />
