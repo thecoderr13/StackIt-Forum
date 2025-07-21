@@ -18,7 +18,7 @@ useEffect(() => {
   const delayDebounce = setTimeout(() => {
     if (searchTerm.trim()) {
       axios
-        .get(`/api/search?q=${encodeURIComponent(searchTerm)}`)
+        .get(`${import.meta.env.VITE_API_URL}/search?q=${encodeURIComponent(searchTerm)}`)
         .then((res) => setSearchSuggestions(res.data))
         .catch(() => setSearchSuggestions([]));
     } else {
@@ -61,7 +61,7 @@ const [stats, setStats] = useState({
 useEffect(() => {
   const fetchStats = async () => {
     try {
-      const res = await axios.get("/api/stats");
+      const res = await axios.get(`${import.meta.env.VITE_API_URL}/stats`);
       setStats(res.data);
     } catch (err) {
       console.error("Failed to load stats:", err);
