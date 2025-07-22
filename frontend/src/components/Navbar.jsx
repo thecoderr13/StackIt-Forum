@@ -72,7 +72,7 @@ useEffect(() => {
   const delayDebounce = setTimeout(async () => {
     if (searchTerm.trim() !== "") {
       try {
-        const res = await axios.get(`/api/search?q=${searchTerm}`)
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/search?q=${searchTerm}`)
         setSearchResults(res.data)
         setShowDropdown(true)
       } catch (err) {
