@@ -8,6 +8,16 @@ const AdminQuestions = () => {
   const [searchTerm, setSearchTerm] = useState("")
   const { token, user } = useAuth()
   const navigate = useNavigate()
+const deleteQuestion = async (id) => {
+  try {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/admin/question/${id}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    setQuestions((prev) => prev.filter((q) => q._id !== id))
+  } catch (err) {
+    console.error("Error deleting question", err)
+  }
+}
 
   const filteredQuestions = questions.filter((q) =>
     (q.title?.toLowerCase() || "").includes(searchTerm.toLowerCase()) ||
