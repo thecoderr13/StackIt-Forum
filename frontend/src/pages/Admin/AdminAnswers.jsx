@@ -27,7 +27,7 @@ const AdminAnswers = () => {
 
     const fetchAnswers = async () => {
       try {
-        const res = await axios.get("/api/admin/answers", {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/answers`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         setAnswers(res.data)
@@ -41,7 +41,7 @@ const AdminAnswers = () => {
 
   const deleteAnswer = async (id) => {
     try {
-      await axios.delete(`/api/admin/answer/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_API_URL}/admin/answer/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       })
       setAnswers((prev) => prev.filter((a) => a._id !== id))

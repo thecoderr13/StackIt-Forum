@@ -21,7 +21,7 @@ const AdminQuestions = () => {
 
     const fetchQuestions = async () => {
       try {
-        const res = await axios.get("/api/admin/questions", {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/questions`, {
           headers: { Authorization: `Bearer ${token}` },
         })
         setQuestions(res.data)

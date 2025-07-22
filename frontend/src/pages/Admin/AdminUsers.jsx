@@ -25,7 +25,7 @@ const filteredUsers = users.filter((u) =>
 
     const fetchUsers = async () => {
       try {
-        const res = await axios.get("/api/admin/users", {
+        const res = await axios.get(`${import.meta.env.VITE_API_URL}/admin/users`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -42,7 +42,7 @@ const filteredUsers = users.filter((u) =>
   }, [token, user, navigate])
   const deleteUser = async (userId) => {
   try {
-    await axios.delete(`/api/admin/user/${userId}`, {
+    await axios.delete(`${import.meta.env.VITE_API_URL}/admin/user/${userId}`, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -55,7 +55,7 @@ const filteredUsers = users.filter((u) =>
 
 const promoteToAdmin = async (userId) => {
   try {
-    const res = await axios.put(`/api/admin/user/${userId}/promote`, {}, {
+    await axios.put(`${import.meta.env.VITE_API_URL}/admin/user/${userId}/promote`, {}, {
       headers: {
         Authorization: `Bearer ${token}`,
       },
